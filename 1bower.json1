@@ -1,0 +1,8 @@
+{
+  "name": "cat",
+  "version": "0.0.0",
+  "dependencies": {
+    "threex.nyancat":"jeromeetienne/threex.nyancat"
+  },
+  "devDependencies": {}
+}
