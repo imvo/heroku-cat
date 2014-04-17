@@ -12,18 +12,30 @@ require([], function(){
 	if( !Detector.webgl ){
 		Detector.addGetWebGLMessage();
 		throw 'WebGL Not Available'
-	} 
+	}
+
+	var range =50;
+	var container = document.getElementById( 'container' )	
+	var containerWidth = window.innerWidth;
+	var containerHeight = window.innerHeight;	
 	// setup webgl renderer full page
 	var renderer	= new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( containerWidth, containerHeight );
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
 	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-	camera.position.z = 3;
+	
+	//var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+	//camera.position.z = 3;
+	
+	
+	var camera = new THREE.PerspectiveCamera( 45, containerWidth / containerHeight, 1, 10000 );
+	camera.position.set( 0, 0, range * 2 );
+	camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 	// declare the rendering loop
 	var onRenderFcts= [];
+	
 
 	// handle window resize events
 	var winResize	= new THREEx.WindowResize(renderer, camera)
@@ -32,14 +44,14 @@ require([], function(){
 	//		default 3 points lightning					//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var ambientLight= new THREE.AmbientLight( 0x020202 )
-	scene.add( ambientLight)
+	//var ambientLight= new THREE.AmbientLight( 0x020202 )
+	//scene.add( ambientLight)
 	var frontLight	= new THREE.DirectionalLight('white', 1)
 	frontLight.position.set(0.5, 0.5, 2)
 	scene.add( frontLight )
-	var backLight	= new THREE.DirectionalLight('white', 0.75)
-	backLight.position.set(-0.5, -0.5, -2)
-	scene.add( backLight )		
+	//var backLight	= new THREE.DirectionalLight('white', 0.75)
+	//backLight.position.set(-0.5, -0.5, -2)
+	//scene.add( backLight )		
 
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +60,7 @@ require([], function(){
 	
 	// make a ref cat object
 	var nyanCat    = new THREEx.NyanCat()
-	nyanCat.container.scale.multiplyScalar(1/50)
+	nyanCat.container.scale.multiplyScalar(0.7)
 	//nyanCat.container.position.set(-2,-1,0)
 	//scene.add( nyanCat.container )
 	
@@ -56,12 +68,12 @@ require([], function(){
 	var cats = [];
 	var counter = 0;
 	var objects = [];
-	for (var i =0; i<=4;i++){
-	for (var j =0; j<=2;j++){
+	for (var i =-60; i<=60;i=i+40){
+	for (var j =-30; j<=30;j=j+30){
 	cats[counter] = nyanCat.container.clone();
-	cats[counter].position.set(i-2,j-1,0);
+	cats[counter].position.set(i,j,0);
 	scene.add( cats[counter] );
-	objects.push( cats[counter] );
+	//objects.push( cats[counter] );
 	counter++;
 	}
 	}
@@ -77,17 +89,29 @@ require([], function(){
 		}
 	})
 	
-var container = document.getElementById( 'container' )
+
 var	projector = new THREE.Projector();
 var	mouseVector = new THREE.Vector3();
 
-containerWidth = container.clientWidth;
-containerHeight = container.clientHeight;
 
-window.addEventListener( 'mousemove', onMouseMove, false );
-function onMouseMove(e){
+
+window.addEventListener( 'click', onClick, false );
+function onClick(e){
+//alert ();
 mouseVector.x = 2 * (e.clientX / containerWidth) - 1;
 mouseVector.y = 1 - 2 * ( e.clientY / containerHeight );
+
+var raycaster = projector.pickingRay( mouseVector.clone(), camera ),
+			intersects = raycaster.intersectObjects( cats );
+
+			
+			for( var i = 0; i < intersects.length; i++ ) {
+			var intersection = intersects[ i ],
+				obj = intersection.object;
+
+			obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+		}
+			
 }
 	
 /*	
