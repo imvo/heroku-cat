@@ -11,5 +11,5 @@
   },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install"
-  }
+  },
 }
