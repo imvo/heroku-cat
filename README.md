@@ -9,7 +9,7 @@ Ths is basic webGL application. It uses three.js as webGL engine, external 3D mo
 1. You can deploy it to your heroku with heroku toolbelt
 2. You can install it locally (node js and npm required):
 - cd to heroku-cat folder
-- run npm install
+- run ```sh npm install```
 
 ## How to use
 run node web.js
